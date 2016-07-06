@@ -9,35 +9,61 @@
 import Silica
 
 /// View that displays the Swift logo.
-public final class SwiftLogoView: UIView {
+public final class SwiftLogoView: Drawable {
     
-    // MARK: - Properties
+    // MARK: - Static Methods
     
-    /// Whether the view also draws "Swift" text next to the logo.
-    ///
-    /// Note: The logo alone has a `1:1` ratio and the logo with text has a `41:12` ratio.
-    public var includesText: Bool = false
-    
-    /// The intrensic content size.
-    public override var intrinsicContentSize: Size  {
+    public static func contentSize(includesText: Bool) -> Size {
         
         return includesText ? Size(width: 164, height: 48) : Size(width: 48, height: 48)
     }
     
+    // MARK: - Properties
+    
+    public var userInteractionEnabled: Bool { return false }
+    
+    public var frame: Rect
+    
+    public var hidden: Bool = false
+    
+    public var clipsToBounds: Bool = true
+    
+    /// Whether the view also draws "Swift" text next to the logo.
+    ///
+    /// Note: The logo alone has a `1:1` ratio and the logo with text has a `41:12` ratio.
+    public var includesText: Bool
+    
+    /// The intrinsic content size.
+    public var intrinsicContentSize: Size  {
+        
+        return SwiftLogoView.contentSize(includesText: includesText)
+    }
+    
+    // MARK: - Initialization
+    
+    public init(frame: Rect? = nil, includesText: Bool = false) {
+        
+        self.includesText = includesText
+        self.frame = frame ?? Rect(size: SwiftLogoView.contentSize(includesText: includesText))
+    }
+    
     // MARK: - Drawing
     
-    public override func draw(_ rect: CGRect) {
+    public func draw(context: Silica.Context) {
         
-        // calculate rect
-        let contentRect = UIView.rect(for: contentMode, size: (intrinsicContentSize, rect.size))
+        let bounds = Rect(size: frame.size)
+        
+        UIGraphicsPushContext(context)
         
         if includesText {
             
-            StyleKit.drawSwiftLogoWithText(frame: contentRect)
+            StyleKit.drawSwiftLogoWithText(frame: bounds)
             
         } else {
             
-            StyleKit.drawSwiftLogo(frame: contentRect)
+            StyleKit.drawSwiftLogo(frame: bounds)
         }
+        
+        UIGraphicsPopContext()
     }
 }

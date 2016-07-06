@@ -16,16 +16,30 @@ final class ScreenTests: XCTestCase {
     static let allTests: [(String, (ScreenTests) -> () throws -> Void)] = [ ("testSimpleSubviews", testSimpleSubviews)]
     
     func testSimpleSubviews() {
-        
-        // Test crashes becuase UIScreen.main is nil
-        /*
+                
         let size = Size(width: 100, height: 100)
         
         let filename = outputDirectory + "simpleSubviews.pdf"
         
         let surface = Surface(pdf: filename, width: size.width, height: size.height)
         
-        let screen = UIScreen(surface: surface, size: size)
+        let screen = Screen(surface: surface, nativeSize: size, size: size)
+        
+        screen.rootViewController = SimpleSubviewsTestViewController()
+        
+        try! screen.render()
+        
+        print("Wrote to \(filename)")
+    }
+}
+
+private final class SimpleSubviewsTestViewController: ViewController {
+    
+    lazy var view: View = self.loadView()
+    
+    private func loadView() -> UIView {
+        
+        let backgroundView = UIView(frame: Rect(size: Size(width: 100, height: 100)))
         
         let view1 = UIView(frame: Rect(origin: Point(x: 10, y: 10), size: Size(width: 80, height: 80)))
         
@@ -43,17 +57,8 @@ final class ScreenTests: XCTestCase {
         
         view1.addSubview(subview1)
         
-        let window = UIWindow(frame: Rect(size: size))
+        backgroundView.addSubview(view1)
         
-        window.rootViewController = UIViewController()
-        
-        window.rootViewController?.view.addSubview(view1)
-        
-        screen.windows.append(window)
-        
-        try! screen.render()
-        
-        print("Wrote to \(filename)")
-        */
+        return backgroundView
     }
 }
